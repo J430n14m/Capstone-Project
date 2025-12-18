@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Microgrid Secure Monitoring Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+    <h1>Microgrid Secure Monitoring Dashboard</h1>
+    <div>Session: {{ session_id }}</div>
+</header>
+
+<div class="container">
+    <div class="cards">
+        <div class="card">
+            <h2>System Stats</h2>
+            <p>Total packets analysed:
+                <strong id="total-packets">{{ system_stats.total_packets_analyzed }}</strong></p>
+            <p>Total threats blocked:
+                <strong id="total-threats">{{ system_stats.total_threats_blocked }}</strong></p>
+            <p>Average detection time:
+                <strong id="avg-time">{{ system_stats.avg_detection_time_ms|round(2) }}</strong> ms</p>
+        </div>
+
+        <div class="card">
+            <h2>Current Risk Score</h2>
+            <p id="risk-score" class="risk-score">{{ risk_score }}</p>
+        </div>
+
+        <div class="card">
+            <h2>Live Sensor Values</h2>
+            <p>Temperature: <strong id="temp-value">--</strong></p>
+            <p>Humidity: <strong id="humidity-value">--</strong></p>
+            <p>Light: <strong id="light-value">--</strong></p>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+        <h2>Recent Alerts</h2>
+        <table class="alerts-table">
+            <thead>
+            <tr>
+                <th>Time</th>
+                <th>Type</th>
+                <th>Severity</th>
+                <th>Message</th>
+            </tr>
+            </thead>
+            <tbody id="alerts-table-body">
+            {% for alert in alerts %}
+                <tr>
+                    <td>{{ alert.timestamp }}</td>
+                    <td>{{ alert.type }}</td>
+                    <td class="severity-{{ alert.severity }}">{{ alert.severity }}</td>
+                    <td>{{ alert.message }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div id="no-alerts-placeholder" class="no-alerts">
+            No alerts detected yet.
+        </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+        <h2>Alert Log</h2>
+        <ul id="alert-log-list" class="alert-log">
+            <!-- log entries inserted here by dashboard.js -->
+        </ul>
+    </div>
+</div>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js" crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+</html>
